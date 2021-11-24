@@ -12,5 +12,11 @@
     "@babel/node": "^7.16.0",
     "@babel/preset-env": "^7.16.4",
     "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "character-parser": "^3.1.0",
+    "express": "^4.17.1",
+    "pug": "^3.0.2",
+    "ws": "^8.3.0"
   }
 }
