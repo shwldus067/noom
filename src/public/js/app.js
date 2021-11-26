@@ -1,40 +1,30 @@
-const messageList = document.querySelector("ul");
-const messageForm=document.querySelector("#message");
-const nickForm=document.querySelector("#nick")
-const socket=new WebSocket(`ws://${window.location.host}`);
+// io() will find the server executing socket.io 
+//   & connect socketIO to front-end
+const socket=io();
 
-function makeMessage(type, payload){
-    const msg={type, payload};
-    return JSON.stringify(msg);
+const welcome=document.getElementById("welcome");
+const form=welcome.querySelector("form");
+const room = document.getElementById("room");
+
+room.hidden=true;
+
+let roomName;
+
+// callback funcion with argument from the backend
+function showRoom(){
+    welcome.hidden=true;
+    room.hidden=false;
+    const h3=room.querySelector("h3");
+    h3.innerText=`Room ${roomName}`
 }
 
-socket.addEventListener("open", () => {
-    console.log("Connected to Browser");
-});
-
-socket.addEventListener("message", (message) => {
-    const li = document.createElement("li");
-    li.innerText=message.data;
-    messageList.append(li);
-});
-
-socket.addEventListener("close", () => {
-    console.log("Disconnected from Server ❌");
-});
-
-function handleSubmit(event){
+function handleRoomSubmit(event){
     event.preventDefault();
-    const input=messageForm.querySelector("input");
-    socket.send(makeMessage("new_message", input.value));
+    const input=form.querySelector("input");
+    // can send any user event & any arguments & callback function(last argument) 
+    socket.emit("enter_room", input.value, showRoom);
+    roomName=input.value;
     input.value="";
 }
 
-function handleNickSubmit(event){
-    event.preventDefault();
-    const input=nickForm.querySelector("input");
-    socket.send(makeMessage("nickname", input.value));
-    input.value="";
-}
-
-messageForm.addEventListener("submit", handleSubmit);
-nickForm.addEventListener("submit", handleNickSubmit);
+form.addEventListener("submit", handleRoomSubmit);
